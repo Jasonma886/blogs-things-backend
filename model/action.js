@@ -16,7 +16,7 @@ function getUserList (req, res) {
 
 function commitBlog (req, res) {
   if (req.session.login) {
-    connect.commitBlog(req.body.params).then(results => {
+    connect.commitBlog(req.body).then(results => {
       res.json({
         code: 0,
         message: 'commit success!'
@@ -32,7 +32,7 @@ function commitBlog (req, res) {
 
 function getBlogsList (req, res) {
   cover(req, res, function () {
-    connect.getBlogsList().then(results => {
+    connect.getBlogsList(req.query.type).then(results => {
       res.json({
         code: 0,
         data: results

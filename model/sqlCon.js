@@ -18,8 +18,7 @@ function getUserList (size = 10, page = 1) {
 
 function login (userName = '') {
   return new Promise((resolve, reject) => {
-    let sql = 'select user_name, user_password as password from user where user_name=?'
-    connect.query(sql, [userName], function (err, results) {
+    connect.query(userSql.getUserByName, [userName], function (err, results) {
       if (err) reject(err)
       resolve(results)
     })
@@ -47,10 +46,13 @@ function commitBlog (params) {
   })
 }
 
-function getBlogsList () {
+function getBlogsList (type) {
+  if (!type || type === 'all') {
+    type = '%'
+  }
   return new Promise((resolve, reject) => {
     let sql = blogSql.getList
-    connect.query(sql, function (err, results) {
+    connect.query(sql, [type], function (err, results) {
       if (err) reject(err)
       resolve(results)
     })
@@ -65,7 +67,6 @@ function getBlogDetail (id) {
       let update = blogSql.updateClicked
       connect.query(update, [id], function (err, results) {
         if (err) throw err
-        console.log(results)
       })
       resolve(results)
     })
