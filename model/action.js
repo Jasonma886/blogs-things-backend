@@ -1,7 +1,7 @@
 let connect = require('./sqlCon')
 let session = require('express-session')
 
-function getUserList(req, res) {
+function getUserList (req, res) {
   let {size, page} = req.query
   connect.getUserList(size, page).then(results => {
     if (results[0] && results[1]) {
@@ -14,7 +14,7 @@ function getUserList(req, res) {
   })
 }
 
-function commitBlog(req, res) {
+function commitBlog (req, res) {
   if (req.session.login) {
     connect.commitBlog(req.body.params).then(results => {
       res.json({
@@ -30,7 +30,7 @@ function commitBlog(req, res) {
   }
 }
 
-function getBlogsList(req, res) {
+function getBlogsList (req, res) {
   cover(req, res, function () {
     connect.getBlogsList().then(results => {
       res.json({
@@ -41,7 +41,7 @@ function getBlogsList(req, res) {
   })
 }
 
-function login(req, res) {
+function login (req, res) {
   let {userName, password} = req.query
   connect.login(userName).then(result => {
     if (result[0]) {
@@ -66,7 +66,7 @@ function login(req, res) {
   })
 }
 
-function checkLogin(req, res) {
+function checkLogin (req, res) {
   if (req.session.login) {
     res.json({
       code: 0,
@@ -82,7 +82,7 @@ function checkLogin(req, res) {
   }
 }
 
-function getBlogDetail(req, res) {
+function getBlogDetail (req, res) {
   cover(req, res, function () {
     connect.getBlogDetail(req.query.blogId).then(results => {
       res.json({
@@ -93,7 +93,23 @@ function getBlogDetail(req, res) {
   })
 }
 
-function getWebsites(req, res) {
+function logout (req, res) {
+  if (req.session.login) {
+    req.session.destroy(err => {
+      res.json({
+        code: 0,
+        message: 'logout!'
+      })
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'No login!'
+    })
+  }
+}
+
+function getWebsites (req, res) {
   console.log(req.session)
   cover(req, res, function () {
     connect.getWebsites().then(data => {
@@ -102,11 +118,11 @@ function getWebsites(req, res) {
   })
 }
 
-function cover(req, res, cb) {
+function cover (req, res, cb) {
   if (req.session.login) {
     cb()
   } else {
-    res.json({
+    res.send({
       code: 1,
       message: 'no login'
     })
@@ -120,5 +136,6 @@ module.exports = {
   login: login,
   getBlogDetail: getBlogDetail,
   getWebsites: getWebsites,
-  checkLogin: checkLogin
+  checkLogin: checkLogin,
+  logout: logout
 }

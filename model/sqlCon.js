@@ -1,17 +1,14 @@
 let mysql = require('mysql')
+let conf = require('../conf/db')
+let blogSql = require('../dao/blogSql')
+let userSql = require('../dao/userSql')
 
-let connect = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '1234',
-  database: 'runoob',
-  multipleStatements: true
-})
+let connect = mysql.createConnection(conf.mysql)
 
 function getUserList (size = 10, page = 1) {
   let offset = size * (page - 1)
   return new Promise((resolve, reject) => {
-    let sql = `select SQL_CALC_FOUND_ROWS user_name,user_age,date_format(create_date, '%Y-%m-%d %H:%i:%s') as createTime,date_format(last_login, '%Y-%m-%d %H:%i:%s') as last_login from user limit ${size} offset ${offset};SELECT FOUND_ROWS() as total;`
+    let sql = userSql.getList(offset, size)
     connect.query(sql, function (err, results) {
       if (err) reject(err)
       resolve(results)
@@ -42,7 +39,7 @@ function getWebsites () {
 function commitBlog (params) {
   let {author, content, title, origin, about} = params
   return new Promise((resolve, reject) => {
-    let sql = 'INSERT INTO blog_tbl (title,author,content,about,origin) VALUES (?,?,?,?,?)'
+    let sql = blogSql.insert
     connect.query(sql, [title, author, content, about, origin], function (err, results) {
       if (err) reject(err)
       resolve(results)
@@ -52,7 +49,7 @@ function commitBlog (params) {
 
 function getBlogsList () {
   return new Promise((resolve, reject) => {
-    let sql = 'select author, blog_id as blogId, title, about, date_format(commit_time, "%Y.%m.%d %H:%i:%s") as commitTime, left(content, 100) as content from blog_tbl limit 10 offset 0'
+    let sql = blogSql.getList
     connect.query(sql, function (err, results) {
       if (err) reject(err)
       resolve(results)
@@ -62,9 +59,14 @@ function getBlogsList () {
 
 function getBlogDetail (id) {
   return new Promise((resolve, reject) => {
-    let sql = 'select author, origin, blog_id as blogId, title, about, date_format(commit_time, "%Y.%m.%d %H:%i:%s") as commitTime, content from blog_tbl where blog_id=?'
+    let sql = blogSql.getDetail
     connect.query(sql, [id], function (err, results) {
       if (err) reject(err)
+      let update = blogSql.updateClicked
+      connect.query(update, [id], function (err, results) {
+        if (err) throw err
+        console.log(results)
+      })
       resolve(results)
     })
   })
