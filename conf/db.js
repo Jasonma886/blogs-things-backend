@@ -17,7 +17,15 @@ module.exports = {
     },
     secret: 'I have a little donkey',
     resave: false,
+    rolling: true,
     saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 15 }
+    cookie: { maxAge: 1000 * 60 * 2 }
+  },
+  mySession: {
+    host: '127.0.0.1',
+    user: 'root',
+    password: '1234',
+    database:'session',
+    port: 3306
   }
 }

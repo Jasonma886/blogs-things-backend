@@ -1,5 +1,4 @@
 let connect = require('./sqlCon')
-let session = require('express-session')
 
 function getUserList (req, res) {
   let {size, page} = req.query
