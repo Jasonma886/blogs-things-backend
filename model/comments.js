@@ -23,11 +23,12 @@ function addComment (req, res) {
 
 function getComments (req, res) {
   let {blogId} = req.query
-  connect.query(sql.queryComments, [blogId], function (err, results) {
+  connect.query(sql.queryComments, [blogId, blogId], function (err, results) {
     if (err) throw err
     res.json({
       code: 0,
-      data: results
+      data: results[0],
+      total: results[1][0].total
     })
   })
 }

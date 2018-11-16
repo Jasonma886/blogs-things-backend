@@ -34,6 +34,21 @@ function getBlogsList (req, res) {
   })
 }
 
+function getCollections (req, res) {
+  let type = req.query.type
+  let user = req.session.userName
+  if (!type || type === 'all') {
+    type = '%'
+  }
+  connect.query(sql.getCollections, [type, user], function (err, results) {
+    if (err) throw err
+    res.json({
+      code: 0,
+      data: results
+    })
+  })
+}
+
 function getBlogDetail (req, res) {
   let user = req.session.userName
   connect.query(sql.getDetail, [user, req.query.blogId], function (err, results) {
@@ -88,6 +103,7 @@ function dislikedBlog (req, res) {
 module.exports = {
   commitBlog,
   getBlogsList,
+  getCollections,
   getBlogDetail,
   likedBlog,
   dislikedBlog

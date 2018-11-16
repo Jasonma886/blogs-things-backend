@@ -6,6 +6,8 @@ router.post('/commitBlog', action.commitBlog)
 
 router.get('/getBlogsList', action.getBlogsList)
 
+router.get('/getCollections', action.getCollections)
+
 router.get('/getBlogById', action.getBlogDetail)
 
 router.post('/likedBlog', action.likedBlog)
