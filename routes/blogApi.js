@@ -1,5 +1,5 @@
 let express = require('express')
-let action = require('../model/action')
+let action = require('../model/blogsAction')
 let router = express.Router()
 
 router.post('/commitBlog', action.commitBlog)

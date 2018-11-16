@@ -1,5 +1,5 @@
 let express = require('express')
-let action = require('../model/action')
+let action = require('../model/userAction')
 let router = express.Router()
 
 router.get('/userList', action.getUserList)
