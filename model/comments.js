@@ -2,15 +2,23 @@ let sql = require('../dao/commentsSql')
 let connect = require('./connection')
 
 function addComment (req, res) {
-  let {from, to, content, blogId} = req.body
-  connect.query(sql.addComment, [from, to, blogId, content], function (err, results) {
-    if (err) throw err
-    console.log(results)
-    res.json({
-      code: 0,
-      message: 'Done!'
+  if (req.session.login) {
+    let {to, content, blogId} = req.body
+    let from = req.session.userName
+    connect.query(sql.addComment, [from, to, blogId, content], function (err, results) {
+      if (err) throw err
+      console.log(results)
+      res.json({
+        code: 0,
+        message: 'Done!'
+      })
     })
-  })
+  } else {
+    res.json({
+      code: 1,
+      message: 'No login!'
+    })
+  }
 }
 
 function getComments (req, res) {
@@ -22,6 +30,10 @@ function getComments (req, res) {
       data: results
     })
   })
+}
+
+function likedComments (req, res) {
+  let {blogId} = req.query
 }
 
 module.exports = {

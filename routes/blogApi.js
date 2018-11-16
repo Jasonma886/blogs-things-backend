@@ -8,4 +8,8 @@ router.get('/getBlogsList', action.getBlogsList)
 
 router.get('/getBlogById', action.getBlogDetail)
 
+router.post('/likedBlog', action.likedBlog)
+
+router.delete('/dislikedBlog', action.dislikedBlog)
+
 module.exports = router

@@ -21,10 +21,11 @@ function commitBlog (req, res) {
 
 function getBlogsList (req, res) {
   let type = req.query.type
+  let user = req.session.userName
   if (!type || type === 'all') {
     type = '%'
   }
-  connect.query(sql.getList, [type], function (err, results) {
+  connect.query(sql.getList1, [user, type], function (err, results) {
     if (err) throw err
     res.json({
       code: 0,
@@ -34,8 +35,10 @@ function getBlogsList (req, res) {
 }
 
 function getBlogDetail (req, res) {
-  connect.query(sql.getDetail, [req.query.blogId], function (err, results) {
+  let user = req.session.userName
+  connect.query(sql.getDetail, [user, req.query.blogId], function (err, results) {
     if (err) throw err
+    connect.query(sql.updateClicked, [req.query.blogId])
     res.json({
       code: 0,
       data: results[0]
@@ -43,8 +46,49 @@ function getBlogDetail (req, res) {
   })
 }
 
+function likedBlog (req, res) {
+  if (req.session.login) {
+    let blogId = req.body.blogId
+    let user = req.session.userName
+    connect.query(sql.likedBlog, [blogId, user], function (err, results) {
+      if (err) throw err
+      res.json({
+        code: 0,
+        message: 'Have been collected!'
+      })
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'No login!'
+    })
+  }
+}
+
+function dislikedBlog (req, res) {
+  if (req.session.login) {
+    let blogId = req.query.blogId
+    let user = req.session.userName
+    connect.query(sql.dislikedBlog, [blogId, user], function (err, results) {
+      if (err) throw err
+      res.json({
+        code: 0,
+        message: 'Have been cancelled!',
+        data: results
+      })
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'No login!'
+    })
+  }
+}
+
 module.exports = {
   commitBlog,
   getBlogsList,
-  getBlogDetail
+  getBlogDetail,
+  likedBlog,
+  dislikedBlog
 }
