@@ -26,8 +26,13 @@ function login (req, res) {
         req.session.userName = userName
         res.json({
           code: 0,
+          data: {
+            lastLogin: result[0].last_login,
+            loginTimes: result[0].login_times
+          },
           message: 'login success!'
         })
+        connect.query(sql.updateLoginTime, [userName])
       } else {
         res.json({
           code: 1,
