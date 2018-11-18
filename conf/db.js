@@ -19,7 +19,7 @@ module.exports = {
     resave: false,
     rolling: true,
     saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 2 }
+    cookie: { maxAge: 1000 * 60 * 20 }
   },
   mySession: {
     host: '127.0.0.1',

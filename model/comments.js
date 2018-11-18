@@ -33,11 +33,62 @@ function getComments (req, res) {
   })
 }
 
+function getCommentsByUser (req, res) {
+  if (req.session.login) {
+    let user = req.session.userName
+    connect.query(sql.queryCommentsByUser, [user], function (err, results) {
+      if (err) throw err
+      res.json({
+        code: 0,
+        data: results
+      })
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'No login!'
+    })
+  }
+}
+
+let deleteComment = (req ,res) => {
+  if (req.session.login) {
+    let user = req.session.userName
+    let commentId = req.query.commentId
+    connect.query(sql.getCommentById, [commentId], function (err, result) {
+      if (err) throw err
+      if (result.length > 0) {
+        if (result[0].user === user) {
+          connect.query(sql.deleteComment, [commentId], function (err, result) {
+            if (err) throw err
+            res.json({
+              code: 0,
+              message: 'Comment have been deleted!'
+            })
+          })
+        } else {
+          res.json({
+            code: 1,
+            message: 'No permission!'
+          })
+        }
+      }
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'No login!'
+    })
+  }
+}
+
 function likedComments (req, res) {
   let {blogId} = req.query
 }
 
 module.exports = {
   addComment,
-  getComments
+  getComments,
+  getCommentsByUser,
+  deleteComment
 }

@@ -4,5 +4,6 @@ let router = express.Router()
 
 router.post('/addComment', action.addComment)
 router.get('/getComments', action.getComments)
+router.get('/getCommentsByUser', action.getCommentsByUser)
 
 module.exports = router

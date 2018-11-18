@@ -19,6 +19,60 @@ function commitBlog (req, res) {
   }
 }
 
+function updateBlog (req, res) {
+  if (req.session.login) {
+    let {author, content, title, origin, about, blogId} = req.body
+    connect.query(sql.update, [title, author, content, about, origin, blogId], function (err, results) {
+      if (err) throw err
+      res.json({
+        code: 0,
+        message: 'update success!'
+      })
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'Please login first!'
+    })
+  }
+}
+
+function deleteBlog (req, res) {
+  if (req.session.login) {
+    let blogId = req.query.blogId
+    let user = req.session.userName
+    connect.query(sql.getOwner, [blogId], function (err ,result) {
+      if (err) throw err
+      if (result.length === 0) {
+        res.json({
+          code: 1,
+          message: 'The blog is not existed!'
+        })
+      } else {
+        if (user === result[0].contributor) {
+          connect.query(sql.delete, [blogId], function (err, result) {
+            if (err) throw err
+            res.json({
+              code: 0,
+              message: 'Have been deleted!'
+            })
+          })
+        } else {
+          res.json({
+            code: 1,
+            message: 'You do not have the permission!'
+          })
+        }
+      }
+    })
+  } else {
+    res.json({
+      code: 1,
+      message: 'Please login first!'
+    })
+  }
+}
+
 function getBlogsList (req, res) {
   let type = req.query.type
   let user = req.session.userName
@@ -102,6 +156,8 @@ function dislikedBlog (req, res) {
 
 module.exports = {
   commitBlog,
+  updateBlog,
+  deleteBlog,
   getBlogsList,
   getCollections,
   getBlogDetail,

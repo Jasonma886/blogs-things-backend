@@ -4,4 +4,7 @@ module.exports = {
   liked: 'update comments set liked=liked+1 where comment_id=?',
   cancelLiked: 'update comments set liked=liked-1 where comment_id=?',
   disliked: 'update comments set disliked=disliked+1 where comment_id=?',
+  queryCommentsByUser: 'SELECT a.comment_id,a.to_user,a.content, date_format(a.time, \'%Y-%m-%d %H:%i:%s\') as time,b.title from comments a left join blog_tbl b on a.blog_id=b.blog_id where a.from_user=?',
+  deleteComment: 'DELETE FROM comments where comment_id=?',
+  getCommentById: 'select from_user as user from comments where comment_id=?'
 }
