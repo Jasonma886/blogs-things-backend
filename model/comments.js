@@ -36,7 +36,13 @@ function getComments (req, res) {
 function getCommentsByUser (req, res) {
   if (req.session.login) {
     let user = req.session.userName
-    connect.query(sql.queryCommentsByUser, [user], function (err, results) {
+    let search = sql.queryCommentsByUser
+    if (req.query.type !== 'mine') {
+      search += ' where a.to_user=?'
+    } else {
+      search += ' where a.from_user=?'
+    }
+    connect.query(search, [user], function (err, results) {
       if (err) throw err
       res.json({
         code: 0,
